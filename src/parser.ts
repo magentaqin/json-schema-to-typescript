@@ -200,13 +200,32 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
+      const unamedEnumParams = schema.enum!.map((_) => {
+        return {
+          ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
+          keyName: (_ as string).toUpperCase()
+        }
+      })
       return set({
         comment: schema.description,
         keyName,
-        params: schema.enum!.map(_ => parse(_, options, rootSchema, undefined, false, processed, usedNames)),
-        standaloneName: standaloneName(schema, keyNameFromDefinition, usedNames),
-        type: 'UNION'
+        params: unamedEnumParams,
+        standaloneName: standaloneName(schema, keyName, usedNames)!,
+        type: 'ENUM'
       })
+      // const unamedEnumParams = schema.enum!.map((_) => {
+      //   return {
+      //     ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
+      //     keyName: (_ as string).toUpperCase()
+      //   }
+      // })
+      // return set({
+      //   comment: schema.description,
+      //   keyName,
+      //   params: unamedEnumParams,
+      //   standaloneName: standaloneName(schema, keyName, usedNames)!,
+      //   type: 'ENUM'
+      // })
     case 'UNNAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':

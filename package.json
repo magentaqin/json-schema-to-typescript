@@ -21,7 +21,8 @@
     "prepublishOnly": "npm test",
     "pretest": "npm run build",
     "watch": "tsc -w",
-    "watch:test": "ava -w"
+    "watch:test": "ava -w",
+    "debug": "node --nolazy --inspect-brk=9229 playground.js"
   },
   "repository": {
     "type": "git",

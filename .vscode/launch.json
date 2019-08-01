@@ -2,6 +2,17 @@
   "version": "0.2.5",
   "configurations": [
     {
+      "name": "Launch via npm",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+          "run-script", "debug"
+      ],
+      "port": 9229
+  },
+    {
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
