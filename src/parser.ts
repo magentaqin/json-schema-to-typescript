@@ -200,32 +200,37 @@ function parseNonLiteral(
         type: 'UNION'
       })
     case 'UNNAMED_ENUM':
-      const unamedEnumParams = schema.enum!.map((_) => {
+      const isAllLetter = /^[a-zA-Z]+[a-zA-Z0-9]+$/
+      const unamedEnumParams = schema.enum!.map((_, index) => {
+        let key = ''
+        const enumValue = _ as string
+        if (isAllLetter.test(enumValue)) {
+          key = enumValue.toString().toUpperCase()
+        } else {
+          const validReg = /^[a-zA-Z]+_*\/*[a-zA-Z0-9]+$/
+          if (validReg.test(enumValue)) {
+            if (enumValue.includes('/')) {
+              key = (enumValue.replace('/', '_')).toUpperCase()
+            } else {
+              key = enumValue.toUpperCase()
+            }
+          } else {
+            key = `${keyName}Enum${index}`
+          }
+        }
         return {
           ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
-          keyName: (_ as string).toUpperCase()
+          keyName: key
         }
       })
-      return set({
+      const result = set({
         comment: schema.description,
         keyName,
         params: unamedEnumParams,
         standaloneName: standaloneName(schema, keyName, usedNames)!,
         type: 'ENUM'
       })
-      // const unamedEnumParams = schema.enum!.map((_) => {
-      //   return {
-      //     ast: parse(_, options, rootSchema, undefined, false, processed, usedNames),
-      //     keyName: (_ as string).toUpperCase()
-      //   }
-      // })
-      // return set({
-      //   comment: schema.description,
-      //   keyName,
-      //   params: unamedEnumParams,
-      //   standaloneName: standaloneName(schema, keyName, usedNames)!,
-      //   type: 'ENUM'
-      // })
+      return result
     case 'UNNAMED_SCHEMA':
       return set(newInterface(schema as SchemaSchema, options, rootSchema, processed, usedNames, keyName, keyNameFromDefinition))
     case 'UNTYPED_ARRAY':
