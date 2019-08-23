@@ -215,7 +215,12 @@ function parseNonLiteral(
               key = enumValue.toUpperCase()
             }
           } else {
-            key = `${keyName}Enum${index}`
+            // MIN_0_MAX_25000
+            if (/^[a-zA-Z_]+[a-zA-Z0-9_]+[a-zA-Z0-9]+$/.test(enumValue)) {
+              key = `${enumValue}`
+            } else {
+              key = `${keyName}Enum${index}`
+            }
           }
         }
         return {
